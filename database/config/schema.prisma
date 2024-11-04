@@ -1,0 +1,57 @@
+
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_CONNECTION_STRING")
+}
+
+// Un generador es utilizado para decirle a Prisma que lenguaje debe utilizar para generar el cliente
+generator client {
+    provider = "prisma-client-js"
+    output = "../generated/prisma-client-js"
+} 
+
+// Models
+model RoleEntity {
+    @@map("auth_role")
+    IsActive Boolean @map("is_active") @default(false)
+    CreatedAt DateTime @map("created_at") @default(now())
+    UpdatedAt DateTime? @map("updated_at") 
+    DeletedAt DateTime? @map("deleted_at")
+    Id Int @map("id") @unique @default(autoincrement())
+    Name String @map("name")
+    UserEntity UserEntity[]
+}
+
+model UserEntity {
+    @@map("auth_user")
+    IsActive Boolean @map("is_active") @default(false)
+    CreatedAt DateTime @map("created_at") @default(now())
+    UpdatedAt DateTime? @map("updated_at") 
+    DeletedAt DateTime? @map("deleted_at")
+    Id Int @map("id") @unique @default(autoincrement())
+    Username String @map("user_name") @unique
+    UsernameHash String @map("username_hash") @unique
+    EmailHash String @map("email_hash") @unique
+    Sub String @map("sub") @unique
+    RoleId Int @map("auth_role_id")
+    Role RoleEntity @relation(fields: [RoleId], references: [Id])
+    Applications ApplicationEntity[]
+}
+
+/// Tabla que almacenara el registro de las colocaciones de las tarjetas de credito
+model ApplicationEntity {
+    @@map("ccf_application")
+    Id  Int @default(autoincrement()) @unique @map("id") /// Id autoincremental
+    IsActive Boolean @map("is_active") @default(false) /// Valida si el registro esta activo o no
+    CreatedAt DateTime @map("created_at") @default(now()) /// Fecha de creacion del registro
+    UpdatedAt DateTime? @map("updated_at")  /// Ultima fecha de actualizacion del registro
+    DeletedAt DateTime? @map("deleted_at") /// Fecha en la cual el registro fue eliminado
+    IncidentId Int? @map("incident_id") /// Numero de incidente de la gestion de CRM
+    CrmProcessId Int? @map("crm_process_id") /// Id de proceso de CRM asociado a la solicitud
+    ExpirationAt DateTime @map("expiration_at") /// Fecha en la que la solicitud expira
+    PhoneNumberHash String? @map("phone_number_hash") @unique /// Hash del numero de telefono del cliente
+    Uuid String @map("uuid") @unique @default(uuid()) /// Identificador de la solicitud
+    UserId Int @map("user_id") /// Id del usuario quien crea la solicitud
+    User UserEntity @relation(fields: [UserId], references: [Id])
+}

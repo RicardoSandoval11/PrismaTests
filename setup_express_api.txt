@@ -1,0 +1,21 @@
+npm install express typescript ts-node @types/node @types/express --save-dev
+npm install dotenv --save
+npm install --save-dev nodemon
+npm install cors --save
+npm i --save-dev @types/cors
+npm install @prisma/client
+npm install -D prisma
+
+
+--------------------- Configuraciones para Prisma
+
+// Paquetes necesarios para trabajar con Prisma
+
+npm install -D prisma
+npm install @prisma/client
+
+// Comandos con la CLI de Prisma
+
+npx prisma init --url CONNECTION_STRING --datasource-provider postgresql // Crear el archivo prisma/schema.prisma
+npx prisma generate --schema ./database/config/schema.prisma // Generar el cliente personalizado para trabajar con Prisma
+npx prisma db push // Crear los modelos en la base de datos
